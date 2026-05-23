@@ -288,13 +288,18 @@
           padding: 0;
           min-height: 0;
           flex: 1 1 auto;
-          overflow: hidden;
+          /* allow scrolling inside modal on mobile */
+          overflow: auto;
+          -webkit-overflow-scrolling: touch;
         }
 
         .modal-body iframe {
           width: 100%;
           height: 100%;
           min-height: 0;
+          /* allow touch panning inside iframe */
+          touch-action: pan-y;
+          -webkit-overflow-scrolling: touch;
         }
       }
     </style>
@@ -399,7 +404,7 @@
             <a
               href="#"
               class="btn btn-primary"
-              data-file="Docs/BÁO CÁO TỔNG KẾT NHIỆM KỲ 2020-2025, PHƯƠNG HƯỚNG, NHIỆM VỤ 2026-2031. chuẩn.pdf"
+              data-file="Docs/BÁO CÁO TỔNG KẾT NHIỆM KỲ 2020-2025, PHUONG HƯƠNG, NHIEM VỤ 2026-2031. chuẩn.pdf"
               >Xem</a
             >
           </div>
@@ -554,8 +559,19 @@
           const separator = path.indexOf("#") === -1 ? "#" : "&";
           iframe.src = encodeURI(path) + separator + "zoom=page-width";
 
-          // Prevent background page from scrolling while modal open
-          document.body.style.overflow = "hidden";
+          // Prevent background page from scrolling while modal open.
+          // Use position:fixed on small screens to avoid blocking touch inside iframe.
+          if (window.innerWidth <= 768) {
+            const scrollY =
+              window.scrollY || document.documentElement.scrollTop;
+            document.body.dataset.scrollY = String(scrollY);
+            document.body.style.position = "fixed";
+            document.body.style.top = `-${scrollY}px`;
+            document.body.style.left = "0";
+            document.body.style.right = "0";
+          } else {
+            document.body.style.overflow = "hidden";
+          }
 
           overlay.style.display = "flex";
           overlay.setAttribute("aria-hidden", "false");
@@ -564,8 +580,19 @@
         function closeModal() {
           overlay.style.display = "none";
           overlay.setAttribute("aria-hidden", "true");
-          // Restore background scroll
-          document.body.style.overflow = "";
+          // Restore background scroll and previous position
+          if (document.body.style.position === "fixed") {
+            const prev =
+              parseInt(document.body.dataset.scrollY || "0", 10) || 0;
+            document.body.style.position = "";
+            document.body.style.top = "";
+            document.body.style.left = "";
+            document.body.style.right = "";
+            delete document.body.dataset.scrollY;
+            window.scrollTo(0, prev);
+          } else {
+            document.body.style.overflow = "";
+          }
           const iframe = document.getElementById("modalFrame");
           if (iframe) iframe.src = "";
           modalBody.innerHTML =
