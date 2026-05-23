@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Xem File Word</title>
+
+    <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        #output {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        img {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Hiển thị file Word trên Web</h1>
+
+    <input type="file" id="upload" accept=".docx">
+
+    <div id="output">
+        Nội dung file Word sẽ hiển thị ở đây...
+    </div>
+
+    <script>
+        document.getElementById('upload').addEventListener('change', function(event) {
+
+            const file = event.target.files[0];
+
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+
+                const arrayBuffer = e.target.result;
+
+                mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
+                    .then(function(result) {
+
+                        document.getElementById('output').innerHTML = result.value;
+
+                    })
+                    .catch(function(err) {
+                        console.error(err);
+                    });
+            };
+
+            reader.readAsArrayBuffer(file);
+        });
+    </script>
+
+</body>
+</html>
