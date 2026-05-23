@@ -16,296 +16,64 @@
     />
 
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+      :root{
+        --bg:#f5f7fb;
+        --text:#1f2937;
+        --muted:#6b7280;
+        --primary:#2563eb;
+        --card-bg:#ffffff;
+        --radius:12px;
+        --gap:16px;
       }
 
-      body {
-        font-family: "Inter", sans-serif;
-        background: #f5f7fb;
-        color: #1f2937;
+      /* Reset and base styles */
+      *,*::before,*::after{box-sizing:border-box}
+      html,body{height:100%}
+      body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,Helvetica, sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+
+      .container{width:92%;max-width:1100px;margin:0 auto}
+      header{padding:28px 0;text-align:center}
+      .logo{font-weight:700;color:var(--primary);font-size:20px}
+      .subtitle{color:var(--muted);font-size:14px}
+
+      /* Cards grid */
+      .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;padding-bottom:36px}
+      .card{background:var(--card-bg);border-radius:14px;padding:18px;box-shadow:0 8px 26px rgba(15,23,42,0.06);display:grid;grid-template-columns:48px 1fr;grid-template-rows:auto 1fr auto;grid-template-areas:"icon title" "desc desc" "buttons buttons";gap:12px;min-height:160px;transition:transform .18s ease,box-shadow .18s ease}
+      .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(15,23,42,0.12)}
+      /* icon + title inline on one row (grid areas) */
+      .card .icon{grid-area:icon;width:48px;height:48px;border-radius:12px;background:#dbeafe;display:inline-flex;align-items:center;justify-content:center;font-size:20px;margin:0;flex-shrink:0}
+      .card .title{grid-area:title;font-size:16px;font-weight:700;margin:0;color:var(--text);align-self:center}
+      .card .desc{grid-area:desc;color:var(--muted);font-size:13px;margin-top:4px}
+      .card .meta{font-size:12px;color:#64748b;margin-top:6px}
+      /* ensure buttons sit in full-width row and have extra top margin */
+      .buttons{grid-area:buttons;margin-top:10px}
+      .btn{display:inline-block;padding:14px 16px;border-radius:10px;text-align:center;text-decoration:none;font-weight:700;font-size:14px;width:100%}
+      .btn-primary{background:linear-gradient(90deg,var(--primary),#1e40af);color:#fff;border:0}
+      @media(min-width:769px){
+        .card{grid-template-columns:56px 1fr;gap:14px;padding:20px}
+        .btn{padding:12px 14px;width:70%}
       }
 
-      .container {
-        width: 90%;
-        max-width: 1200px;
-        margin: auto;
-      }
+      /* Modal - mobile-first */
+      .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;padding:12px;z-index:9999}
+      .modal{width:100%;max-width:980px;background:var(--card-bg);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;max-height:calc(100vh - 24px)}
+      .modal-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f1f5f9;background:linear-gradient(90deg,#fbfbfd,#ffffff)}
+      .modal-title{font-weight:700;font-size:14px}
+      .modal-actions{display:flex;gap:8px;align-items:center}
+      .btn-outline{display:inline-block;padding:8px 10px;border-radius:8px;border:1px solid var(--primary);color:var(--primary);background:transparent;font-weight:600;text-decoration:none}
+      .btn-outline:hover{background:rgba(37,99,235,0.06)}
+      .modal-close{background:transparent;border:0;font-size:18px;cursor:pointer;padding:6px}
+      .modal-body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch}
+      .modal-body iframe{width:100%;height:100%;min-height:60vh;border:0;display:block}
 
-      header {
-        padding: 60px 0 40px;
-        text-align: center;
-      }
+      footer{padding:18px;text-align:center;color:var(--muted);font-size:13px}
 
-      .logo {
-        font-size: 38px;
-        font-weight: 700;
-        color: #2563eb;
-        margin-bottom: 12px;
-      }
-
-      .subtitle {
-        color: #6b7280;
-        font-size: 16px;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 24px;
-        padding-bottom: 60px;
-      }
-
-      .card {
-        background: #fff;
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-        transition: 0.25s;
-      }
-
-      /* Make card layout consistent: stack content and push actions to bottom */
-      .card {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        min-height: 260px;
-      }
-
-      .card:hover {
-        transform: translateY(-6px);
-      }
-
-      .icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 16px;
-        background: #dbeafe;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28px;
-        margin-bottom: 20px;
-      }
-
-      .title {
-        font-size: 20px;
-        font-weight: 600;
-        margin-bottom: 10px;
-      }
-
-      .title {
-        word-break: break-word;
-        line-height: 1.2;
-        font-size: 18px;
-      }
-
-      .desc {
-        color: #6b7280;
-        font-size: 14px;
-        line-height: 1.6;
-        margin-bottom: 16px;
-        min-height: 60px;
-        flex: 1 1 auto;
-      }
-
-      .buttons {
-        display: flex;
-        gap: 12px;
-        margin-top: 12px;
-      }
-
-      .btn {
-        flex: 1;
-        text-align: center;
-        text-decoration: none;
-        padding: 12px;
-        border-radius: 12px;
-        font-size: 14px;
-        font-weight: 600;
-        transition: 0.2s;
-      }
-
-      .btn-primary {
-        background: #2563eb;
-        color: #fff;
-      }
-
-      .btn-primary:hover {
-        background: #1e40af;
-      }
-
-      .btn-outline {
-        border: 1px solid #2563eb;
-        color: #2563eb;
-      }
-
-      .btn-outline:hover {
-        background: #eff6ff;
-      }
-
-      /* Modal preview styles */
-      .modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        padding: 24px;
-      }
-
-      .modal {
-        width: 100%;
-        max-width: 1000px;
-        height: 80vh;
-        background: #fff;
-        border-radius: 12px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .modal-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 16px;
-        border-bottom: 1px solid #eee;
-        background: #fafafa;
-      }
-
-      .modal-body {
-        flex: 1;
-        background: #fff;
-        overflow: auto; /* allow scrolling inside modal */
-        padding: 0;
-      }
-
-      /* Styles for converted  content */
-      -content {
-        font-family:
-          "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
-          sans-serif;
-        color: #111827;
-        font-size: 15px;
-        line-height: 1.45;
-        padding: 18px;
-        max-height: calc(80vh - 60px);
-        overflow: auto; /* enable internal scrolling for long docs */
-        box-sizing: border-box;
-      }
-
-      -content img {
-        max-width: 100%;
-        height: auto;
-        display: block;
-        margin: 8px 0;
-      }
-      -content p {
-        margin: 0 0 12px;
-      }
-      -content h1,
-      -content h2,
-      -content h3 {
-        margin: 0 0 10px;
-      }
-
-      .modal-body iframe {
-        width: 100%;
-        height: 100%;
-        border: 0;
-        display: block;
-      }
-
-      .modal-close {
-        background: transparent;
-        border: 0;
-        font-size: 18px;
-        cursor: pointer;
-        padding: 6px 10px;
-      }
-
-      footer {
-        text-align: center;
-        padding: 30px;
-        color: #9ca3af;
-        font-size: 14px;
-      }
-
-      @media (max-width: 768px) {
-        header {
-          padding-top: 40px;
-        }
-
-        .logo {
-          font-size: 30px;
-        }
-        .container {
-          width: 94%;
-        }
-        .card {
-          padding: 18px;
-          min-height: 220px;
-        }
-        .icon {
-          width: 48px;
-          height: 48px;
-          font-size: 22px;
-        }
-        .title {
-          font-size: 16px;
-        }
-        .desc {
-          font-size: 13px;
-          margin-bottom: 12px;
-        }
-
-        .modal-overlay {
-          padding: 8px;
-          align-items: flex-start;
-        }
-
-        .modal {
-          width: 100%;
-          max-width: 100%;
-          max-height: calc(100vh - 16px);
-          height: calc(100vh - 16px);
-          border-radius: 12px;
-        }
-
-        .modal-header {
-          padding: 10px 14px;
-          position: sticky;
-          top: 0;
-          z-index: 2;
-        }
-
-        .modal-body {
-          padding: 0;
-          min-height: 0;
-          flex: 1 1 auto;
-          /* allow scrolling inside modal on mobile */
-          overflow: auto;
-          -webkit-overflow-scrolling: touch;
-        }
-
-        .modal-body iframe {
-          width: 100%;
-          height: 100%;
-          min-height: 0;
-          /* allow touch panning inside iframe */
-          touch-action: pan-y;
-          -webkit-overflow-scrolling: touch;
-        }
+      @media(min-width:769px){
+        .logo{font-size:28px}
+        header{padding:48px 0 28px}
+        .modal{height:80vh;border-radius:12px}
       }
     </style>
-  </head>
-
-  <body>
     <header class="container">
       <div class="logo">
         VĂN KIỆN ĐẠI HỘI ĐẠI BIỂU HỘI KHUYẾN HỌC XÃ SALOONG LẦN THỨ I, NHIỆM KỲ
@@ -322,12 +90,7 @@
           <div class="title">Đề án nhân sự BCH khuyến học</div>
 
           <div class="buttons">
-            <a
-              href="#"
-              class="btn btn-primary"
-              data-file="Docs/05. Đề án nhân sự BCH khuyến học  ng.pdf"
-              >Xem</a
-            >
+            <a href="Docs/05. Đề án nhân sự BCH khuyến học  ng.pdf" class="btn btn-primary" target="_blank" rel="noopener" data-external="true">Xem</a>
           </div>
         </div>
 
@@ -338,12 +101,7 @@
           <div class="title">BÁO CÁO THẨM TRA TƯ CÁCH ĐẠI BIỂU</div>
 
           <div class="buttons">
-            <a
-              href="#"
-              class="btn btn-primary"
-              data-file="Docs/4. BAO CAO THAM TRA TU CACH DAI BIEU.pdf"
-              >Xem</a
-            >
+            <a href="Docs/4. BAO CAO THAM TRA TU CACH DAI BIEU.pdf" class="btn btn-primary" target="_blank" rel="noopener" data-external="true">Xem</a>
           </div>
         </div>
 
@@ -353,12 +111,7 @@
           <div class="title">BÁO CÁO KIỂM ĐIỂM BCH NHIỆM KỲ 2020-2025</div>
 
           <div class="buttons">
-            <a
-              href="#"
-              class="btn btn-primary"
-              data-file="Docs/Bao cáo kiểm điểm BCH nhiệm kỳ 2020-2025.pdf"
-              >Xem</a
-            >
+            <a href="Docs/Bao cáo kiểm điểm BCH nhiệm kỳ 2020-2025.pdf" class="btn btn-primary" target="_blank" rel="noopener" data-external="true">Xem</a>
           </div>
         </div>
 
@@ -368,12 +121,7 @@
           <div class="title">BÁO CÁO BAN KIỂM TRA HỘI KHUYẾN HỌC</div>
 
           <div class="buttons">
-            <a
-              href="#"
-              class="btn btn-primary"
-              data-file="Docs/BÁO CÁO BAN KIỂM TRA HỘI KHUYẾN HỌC.pdf"
-              >Xem</a
-            >
+            <a href="Docs/BÁO CÁO BAN KIỂM TRA HỘI KHUYẾN HỌC.pdf" class="btn btn-primary" target="_blank" rel="noopener" data-external="true">Xem</a>
           </div>
         </div>
 
@@ -383,12 +131,7 @@
           <div class="title">Báo cáo tài chính nhiệm kỳ 2020-2025</div>
 
           <div class="buttons">
-            <a
-              href="#"
-              class="btn btn-primary"
-              data-file="Docs/báo cáo tài chính nhiệm kỳ 2020-2025.pdf"
-              >Xem</a
-            >
+            <a href="Docs/báo cáo tài chính nhiệm kỳ 2020-2025.pdf" class="btn btn-primary" target="_blank" rel="noopener" data-external="true">Xem</a>
           </div>
         </div>
 
@@ -401,12 +144,7 @@
           </div>
 
           <div class="buttons">
-            <a
-              href="#"
-              class="btn btn-primary"
-              data-file="Docs/BÁO CÁO TỔNG KẾT NHIỆM KỲ 2020-2025, PHUONG HƯƠNG, NHIEM VỤ 2026-2031. chuẩn.pdf"
-              >Xem</a
-            >
+            <a href="Docs/BÁO CÁO TỔNG KẾT NHIỆM KỲ 2020-2025, PHUONG HƯƠNG, NHIEM VỤ 2026-2031. chuẩn.pdf" class="btn btn-primary" target="_blank" rel="noopener" data-external="true">Xem</a>
           </div>
         </div>
 
@@ -416,12 +154,7 @@
           <div class="title">CHƯƠNG TRÌNH ĐẠI HỘI TRÙ BỊ</div>
 
           <div class="buttons">
-            <a
-              href="#"
-              class="btn btn-primary"
-              data-file="Docs/CHUONG TRINH ĐH TRU BI.pdf"
-              >Xem</a
-            >
+            <a href="Docs/CHUONG TRINH ĐH TRU BI.pdf" class="btn btn-primary" target="_blank" rel="noopener" data-external="true">Xem</a>
           </div>
         </div>
 
@@ -431,12 +164,7 @@
           <div class="title">CHƯƠNG TRÌNH ĐẠI HỘI (CHÍNH THỨC)</div>
 
           <div class="buttons">
-            <a
-              href="#"
-              class="btn btn-primary"
-              data-file="Docs/CHƯƠNG TRÌNH ĐẠI HỘI (CHÍNH THỨC).pdf"
-              >Xem</a
-            >
+            <a href="Docs/CHƯƠNG TRÌNH ĐẠI HỘI (CHÍNH THỨC).pdf" class="btn btn-primary" target="_blank" rel="noopener" data-external="true">Xem</a>
           </div>
         </div>
 
@@ -448,12 +176,7 @@
           </div>
 
           <div class="buttons">
-            <a
-              href="#"
-              class="btn btn-primary"
-              data-file="Docs/Copy of DS trich ngang BCH HKH NK 2026-2031.pdf"
-              >Xem</a
-            >
+            <a href="Docs/Copy of DS trich ngang BCH HKH NK 2026-2031.pdf" class="btn btn-primary" target="_blank" rel="noopener" data-external="true">Xem</a>
           </div>
         </div>
 
@@ -463,12 +186,7 @@
           <div class="title">Danh mục tài liệu ĐH</div>
 
           <div class="buttons">
-            <a
-              href="#"
-              class="btn btn-primary"
-              data-file="Docs/Danh mục tài liệu ĐH.pdf"
-              >Xem</a
-            >
+            <a href="Docs/Danh mục tài liệu ĐH.pdf" class="btn btn-primary" target="_blank" rel="noopener" data-external="true">Xem</a>
           </div>
         </div>
 
@@ -478,12 +196,7 @@
           <div class="title">NGHỊ QUYẾT ĐẠI HỘI KHUYẾN HỌC 2026-2031 sữa</div>
 
           <div class="buttons">
-            <a
-              href="#"
-              class="btn btn-primary"
-              data-file="Docs/NGHI QUYET DAI HOI KHUYEN HOC 2026-2031 sữa.pdf"
-              >Xem</a
-            >
+            <a href="Docs/NGHI QUYET DAI HOI KHUYEN HOC 2026-2031 sữa.pdf" class="btn btn-primary" target="_blank" rel="noopener" data-external="true">Xem</a>
           </div>
         </div>
 
@@ -493,12 +206,7 @@
           <div class="title">THAM LUẬN KHUYẾN HỌC NHÀ TRƯỜNG 2026</div>
 
           <div class="buttons">
-            <a
-              href="#"
-              class="btn btn-primary"
-              data-file="Docs/THAM LUAN khuyen hoc  Nhà trường 2026.pdf"
-              >Xem</a
-            >
+            <a href="Docs/THAM LUAN khuyen hoc  Nhà trường 2026.pdf" class="btn btn-primary" target="_blank" rel="noopener" data-external="true">Xem</a>
           </div>
         </div>
 
@@ -508,12 +216,7 @@
           <div class="title">THAM LUẬN THÔN 2</div>
 
           <div class="buttons">
-            <a
-              href="#"
-              class="btn btn-primary"
-              data-file="Docs/tham luận thôn 2.pdf"
-              >Xem</a
-            >
+            <a href="Docs/tham luận thôn 2.pdf" class="btn btn-primary" target="_blank" rel="noopener" data-external="true">Xem</a>
           </div>
         </div>
       </div>
@@ -527,12 +230,6 @@
         aria-modal="true"
         aria-labelledby="modalTitle"
       >
-        <div class="modal-header">
-          <div id="modalTitle">Xem tài liệu</div>
-          <div>
-            <button class="modal-close" id="modalClose">✕</button>
-          </div>
-        </div>
         <div class="modal-body">
           <iframe id="modalFrame" src="" title="Preview"></iframe>
         </div>
@@ -558,6 +255,17 @@
           // Append PDF viewer hint to fit width on mobile if supported by the viewer
           const separator = path.indexOf("#") === -1 ? "#" : "&";
           iframe.src = encodeURI(path) + separator + "zoom=page-width";
+
+          // Configure external-open action: open file in new tab (helps mobile viewers show all pages)
+          const openExternal = document.getElementById('openExternal');
+          if(openExternal){
+            openExternal.href = encodeURI(path);
+            openExternal.onclick = function(e){
+              e.preventDefault();
+              try { window.open(encodeURI(path), '_blank', 'noopener'); }
+              catch(err){ location.href = encodeURI(path); }
+            };
+          }
 
           // Prevent background page from scrolling while modal open.
           // Use position:fixed on small screens to avoid blocking touch inside iframe.
@@ -599,12 +307,13 @@
             '<iframe id="modalFrame" src="" title="Preview"></iframe>';
         }
 
-        document.querySelectorAll(".btn.btn-primary").forEach((btn) => {
-          btn.addEventListener("click", function (e) {
+        // Only attach modal openers to buttons that still explicitly provide data-file
+        document.querySelectorAll('.btn.btn-primary[data-file]:not([data-external])').forEach((btn) => {
+          btn.addEventListener('click', function (e) {
             e.preventDefault();
-            const path = btn.getAttribute("data-file");
+            const path = btn.getAttribute('data-file');
             if (!path) {
-              alert("Không có tệp được chỉ định cho mục này.");
+              alert('Không có tệp được chỉ định cho mục này.');
               return;
             }
             openModal(path);
