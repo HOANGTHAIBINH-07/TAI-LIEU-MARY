@@ -4,21 +4,17 @@ This folder contains a document viewer landing page with previews for `Docs/` fi
 
 ## Setup
 
-1. Run `generate_previews.py` to create PDF previews from the source Word/Excel files:
+1. Open a terminal and change to the project folder `e:\TAI-LIEU-MARY`.
 
-```bash
-python generate_previews.py
-```
+2. The document files are already available as PDF inside `Docs/`, so no conversion is required.
 
-2. Start a local HTTP server from this folder:
+3. Open `index.html` directly in your browser.
 
-```bash
-python -m http.server 8000
-```
+   If your browser blocks local PDF loading, use the included `start_server.bat` to start a local HTTP server without Python.
 
-3. Open `http://localhost:8000/index.html` in your browser.
+4. Open `http://localhost:8000/index.html` in your browser if you start the local server.
 
 ## Notes
 
-- The preview generator uses LibreOffice (`soffice`) to convert `.doc`, `.docx`, `.xls`, and `.xlsx` to PDF. Install LibreOffice and add it to your PATH if needed.
-- The page loads generated `previews/*.pdf` files in the modal for correct font rendering.
+- The page loads PDF files directly from the `Docs/` folder.
+- Make sure `http://localhost:8000/index.html` is opened after starting the server from `e:\TAI-LIEU-MARY`.
