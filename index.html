@@ -351,7 +351,7 @@
             <a
               href="#"
               class="btn btn-primary"
-              data-file="Docs/BÁO CÁO KIỂM ĐIỂM BCH NHIỆM KỲ 2020-2025.pdf"
+              data-file="Docs/Bao cáo kiểm điểm BCH nhiệm kỳ 2020-2025.pdf"
               >Xem</a
             >
           </div>
@@ -446,7 +446,7 @@
             <a
               href="#"
               class="btn btn-primary"
-              data-file="Docs/DANH SÁCH TRÍCH NGANG BCH HỘI KHUYẾN HỌC NK 2026-2031.pdf"
+              data-file="Docs/Copy of DS trich ngang BCH HKH NK 2026-2031.pdf"
               >Xem</a
             >
           </div>
@@ -476,7 +476,7 @@
             <a
               href="#"
               class="btn btn-primary"
-              data-file="Docs/NGHỊ QUYẾT DẠI HỘI KHUYẾN HỌC 2026-2031 sữa.pdf"
+              data-file="Docs/NGHI QUYET DAI HOI KHUYEN HOC 2026-2031 sữa.pdf"
               >Xem</a
             >
           </div>
@@ -491,7 +491,7 @@
             <a
               href="#"
               class="btn btn-primary"
-              data-file="Docs/THAM LUẬN KHUYẾN HỌC NHÀ TRƯỜNG 2026.pdf"
+              data-file="Docs/THAM LUAN khuyen hoc  Nhà trường 2026.pdf"
               >Xem</a
             >
           </div>
@@ -548,9 +548,14 @@
           titleEl.textContent = filename || "Xem tài liệu";
 
           modalBody.innerHTML =
-            '<iframe id="modalFrame" src="" title="Preview"></iframe>';
+            '<iframe id="modalFrame" src="" title="Preview" allowfullscreen></iframe>';
           const iframe = document.getElementById("modalFrame");
-          iframe.src = encodeURI(path);
+          // Append PDF viewer hint to fit width on mobile if supported by the viewer
+          const separator = path.indexOf("#") === -1 ? "#" : "&";
+          iframe.src = encodeURI(path) + separator + "zoom=page-width";
+
+          // Prevent background page from scrolling while modal open
+          document.body.style.overflow = "hidden";
 
           overlay.style.display = "flex";
           overlay.setAttribute("aria-hidden", "false");
@@ -559,6 +564,8 @@
         function closeModal() {
           overlay.style.display = "none";
           overlay.setAttribute("aria-hidden", "true");
+          // Restore background scroll
+          document.body.style.overflow = "";
           const iframe = document.getElementById("modalFrame");
           if (iframe) iframe.src = "";
           modalBody.innerHTML =
